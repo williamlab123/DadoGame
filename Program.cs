@@ -8,16 +8,82 @@ void Main()
     // Dado4();
     // Dado5();
     // Dado6();
-    battle(PcBet(), 150);
+    // battle(PcBet(), 150);
+    Console.Clear();
+    System.Console.WriteLine("DiceGame");
+    System.Console.WriteLine("Digite ? para ler as regras");
+    System.Console.WriteLine("Se nao, qualquer tecla pra começar");
+
+    string input = Console.ReadLine();
+
+    int dinheiro = 1000;
+
+
+    if (input == "?") regras();
+
+    else start(dinheiro);
+
 
 
 }
 
 
-void start()
+void start(int dinheiro)
 {
-    System.Console.WriteLine("");
+    int dinheiroPc = 0;
+    do
+    {
+         int aposta;
+
+
+    System.Console.WriteLine("Quanto deseja apostar?");
+    aposta = int.Parse(Console.ReadLine());
+    dinheiro -= aposta;
+    System.Console.WriteLine($"Voce apostou {aposta}");
+    System.Console.WriteLine("Jogando os dados...");
+
+    int resultado = battle(aposta, aposta);
+
+    switch (resultado)
+    {
+        case 1:
+            System.Console.WriteLine("Voce venceu!");
+            dinheiro += PcBet();
+
+            System.Console.WriteLine($"Agora voce tem {dinheiro} de dinheiro");
+            start(dinheiro);
+            break;
+        case 2:
+            System.Console.WriteLine("Voce perdeu!");
+            System.Console.WriteLine($"Agora voce tem {dinheiro} de dinheiro");
+
+            start(dinheiro);
+
+            break;
+        case 3:
+            System.Console.WriteLine("Empate");
+            System.Console.WriteLine("Seu dinheiro apostado voltou pro seu bolso!");
+
+            dinheiro += aposta;
+            break;
+            start(dinheiro);
+        default:
+            System.Console.WriteLine("Erro");
+            break;
+    }
+
+    } while(dinheiro > 0 || dinheiroPc > 0);
+
+   
+
+   
+
+
+
+
 }
+
+
 
 
 
@@ -35,11 +101,12 @@ int PcBet()
 }
 
 
-void battle(int pcbet, int userBet)
+int battle(int pcbet, int userBet)
 {
 
     int[] randomNumbersPc = Randoms();
     int[] randomNumbersUser = Randoms();
+    Dice dice = new Dice();
 
 
     pcbet = PcBet();
@@ -50,107 +117,46 @@ void battle(int pcbet, int userBet)
     int pcScore = 0;
 
     Console.WriteLine("numeros dos dados do pc");
-    foreach (int number in randomNumbersPc)
+    foreach (int _i in Enumerable.Range(1, 3))
     {
-        Console.WriteLine(number);
-        switch (number)
-        {
-            case 1:
-                Dado1();
-                pcScore++;
-                break;
-            case 2:
-                Dado2();
-                pcScore += 2;
-                break;
-            case 3:
-                Dado3();
-                pcScore += 3;
-                break;
-            case 4:
-                Dado4();
-                pcScore += 4;
-                break;
-            case 5:
-                Dado5();
-                pcScore += 5;
-                break;
-            case 6:
-                Dado6();
-                pcScore += 6;
-                break;
-            default:
-                System.Console.WriteLine("bug");
-                break;
-        }
-
+        dice.Roll();
+        // Console.WriteLine($"O numero do dado agora é: {dice.Number}");
+        pcScore += dice.Number;
+        dice.DrawDice();
     }
+
+
+
     Console.WriteLine("numeros dos dados do usuário");
-    foreach (int number in randomNumbersUser)
+    foreach (int _i in Enumerable.Range(1, 3))
     {
-        Console.WriteLine(number);
-        switch (number)
-        {
-            case 1:
-                Dado1();
-                userScore++;
-                break;
-            case 2:
-                Dado2();
-                userScore += 2;
-                break;
-            case 3:
-                Dado3();
-                userScore += 3;
-                break;
-            case 4:
-                Dado4();
-                userScore += 4;
-                break;
-            case 5:
-                Dado5();
-                userScore += 5;
-                break;
-            case 6:
-                Dado6();
-                userScore += 6;
-                break;
-            default:
-                System.Console.WriteLine("bug");
-                break;
-        }
-
+        dice.Roll();
+        // Console.WriteLine($"O numero do dado agora é: {dice.Number}");
+        userScore += dice.Number;
+        dice.DrawDice();
     }
+
     System.Console.WriteLine(userScore);
     System.Console.WriteLine(pcScore);
 
-    if (userScore > pcScore) System.Console.WriteLine("vc venceu corno manco");
 
 
 
-    else if (userScore < pcScore) System.Console.WriteLine("vc perdeu, cabaço");
+    if (userScore > pcScore)
+    {
+        return 1;
 
+    }
+    else if (userScore < pcScore)
+    {
+        return 2;
+    }
+    else
+    {
+        return 0;
+    }
 
-
-
-
-
-    else System.Console.WriteLine("bug fodase");
-
-
-    // int[] randomNumbersUser = pcRandoms();
-
-    // Console.WriteLine("numeros dos dados do usuário");
-    // foreach (int numberUser in randomNumbersUser)
-    // {
-    //     Console.WriteLine(numberUser);
-    // }
 }
-
-
-
-
-
 int[] Randoms()
 {
     Random rnd = new Random();
@@ -224,17 +230,6 @@ ConsoleColor GetConsoleColorFromName(string cor)
 
     return ConsoleColor.Black;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
